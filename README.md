@@ -1,5 +1,5 @@
 # zoning_classifications
-Analysis performed by [David Vatz](https://github.com/davidvatz)
+
 Repository of GIS data and analysis on how many de facto zoning classifications there are in the City of Pittsburgh
 
 The City of Pittsburgh has numerous base zoning districts and zoning overlays that govern land use within the city limits. The purpose of this project is to determine how many "de facto" zoning classifications exist in the City of Pittsburgh by looking at how many unique combinations of base zoning, density, and overlays exist. Each one of these unique combination is potentially a different set of land use rules that builders must follow when building.
@@ -431,4 +431,4 @@ There are a total of **402** unique zoning classifications, as noted below
 |-------|-------------|
 |Grand Total|145031|
 
-
+Analysis performed by [David Vatz](https://github.com/davidvatz)
