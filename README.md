@@ -8,6 +8,8 @@ In order to do this, we first gathered the GIS data from the city and county on 
 2) Pittsburgh's base zoning map, from the City of Pittsburgh - base_zoning.geojson, obtained on 7/30/2025 from [Pittsburgh's GIS portal](https://pghgishub-pittsburghpa.opendata.arcgis.com/datasets/e67592c2904b497b83ccf876fced7979_0/explore?location=40.430794%2C-79.979856%2C12.17)
 3) Maps of Pittsburgh's the nine "zoning overlays", from the City of Pittsburgh - (overlay_name.geojson), obtained on 7/30/2025 from [Pittsburgh's GIS portal](https://pghgishub-pittsburghpa.opendata.arcgis.com/search) The nine overlays include Inclusionary Zoning, Height Reduction, Floodplain, Undermined Area, Height, Parking Exemption and Reduction Area, North Side Commercial Parking, Baum Centre, Landslide Prone.
 
+**All of the source data** that was used in the analysis is [available here](https://drive.google.com/drive/folders/1tAAWBCRdL9UOF101u-l9g13xcutG1jkU?usp=sharing), and the python script and results are contained in this GitHub repository.
+
 Afterwards, we wrote a Python script to take each parcel and determine what it's base zoning (i.e. R1A-L, RM-M, UC-E, etc) and which of the nine overlays apply.
 
 The Python script generates an excel file, which we then applied some formulas to in order to create a zoning designation, formatted as follows:
