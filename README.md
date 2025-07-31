@@ -432,3 +432,11 @@ There are a total of **402** unique zoning classifications, as noted below
 |Grand Total|145031|
 
 Analysis performed by [David Vatz](https://github.com/davidvatz)
+
+Note for @Jack Billings - 
+>I added the following columns to the end of spreadsheet...
+><img width="1508" height="526" alt="image" src="https://github.com/user-attachments/assets/c11fbaa5-772c-4eda-8d08-b9f791c0cd91" />
+
+>These could likely be completed automatically by the python script, but I wasn't sure how.
+
+>Additionally, I added the sheet "Results", which consists of a pivot table of the different zoning classifications (Column U), and a count of how many times they appear. Then, I created a formatting of the pivot table to easily paste into GitHub
