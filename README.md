@@ -2,9 +2,15 @@
 
 Analysis of how many de facto zoning classifications there are in the City of Pittsburgh
 
-The City of Pittsburgh has numerous base zoning districts and zoning overlays that govern land use within the city limits. The purpose of this project is to determine how many "de facto" zoning classifications exist in the City of Pittsburgh by looking at how many unique combinations of base zoning, density, and overlays exist. Each one of these unique combination is potentially a different set of land use rules that builders must follow when building.
+The City of Pittsburgh has numerous base zoning districts, zoning overlays, environmental overlays, and historic districts that govern land use within the city limits. 
 
-In order to do this, we first gathered the GIS data from the city and county on the following:
+The purpose of this project is to determine how many "de facto" zoning classifications exist in the City of Pittsburgh by looking at how many unique combinations of base zoning, density, and overlays exist. Each one of these unique combination is potentially a different set of land use rules that builders must follow.
+
+We find that there are a total of **1,208** unique zoning classifications in the city of Pittsburgh, each of which can represent a unique set of rules that must be followed when building on that parcel. With a total universe of around 145,030 parcels that we analyzed, this means that there is approximately **one unique rule set for every 120 properties in the city**. 
+
+Method:
+
+We first gathered the GIS data from the city and county on the following:
 1) Parcel data, from Allegheny County - parcels.geojson, obtained on 7/31/2025 from [Allegheny County's GIS portal](https://openac-alcogis.opendata.arcgis.com/documents/1b3e5809fb964497a52ca225db492624/explore)
 2) Pittsburgh's base zoning map, from the City of Pittsburgh - base_zoning.geojson, obtained on 7/30/2025 from [Pittsburgh's GIS portal](https://pghgishub-pittsburghpa.opendata.arcgis.com/datasets/e67592c2904b497b83ccf876fced7979_0/explore?location=40.430794%2C-79.979856%2C12.17)
 3) Maps of Pittsburgh's the nine "zoning overlays", from the City of Pittsburgh - (overlay_name.geojson), obtained on 7/30/2025 from [Pittsburgh's GIS portal](https://pghgishub-pittsburghpa.opendata.arcgis.com/search) The nine overlays include Inclusionary Zoning, Height Reduction, Floodplain, Undermined Area, Height, Parking Exemption and Reduction Area, North Side Commercial Parking, Baum Centre, Landslide Prone.
@@ -14,15 +20,17 @@ In order to do this, we first gathered the GIS data from the city and county on 
 
 **All of the source data** that was used in the analysis is [available here](https://drive.google.com/drive/folders/1tAAWBCRdL9UOF101u-l9g13xcutG1jkU?usp=sharing), and the python script and results are contained in this GitHub repository.
 
-We wrote a Python script to take each parcel and determine what it's base zoning (i.e. R1A-L, RM-M, UC-E, etc) and which of the overlays, environmental designations, and historical designations exist.
+We developed a script to iterate through each parcel and determine what it's base zoning (i.e. R1A-L, RM-M, UC-E, etc) is and which of the overlays, environmental designations, and historical designations exist.
 
-The Python script generates a csv, where for each city parcel it shows which of the designations exist, and creates a "zoning_summary" formatted as follows:
+The script generates a csv, where for each city parcel it shows which of the designations exist, and creates a "zoning_summary" formatted as follows:
 BaseZoning[-Density/Subdistrict][-Overlay-Overlay....-Overlay]
 
 All properties will have a BaseZoning, but -Density and -Overlay will only be there if there are applicable density, subdistrict, overlay, or environmental designations exist for that property.
 
 So for example, if a property is in Single Family Attached, Medium Density area and is covered by the IZ overlay and the Landslide Prone overlay, it's zoning designation would be as follows:
 R1A-M-IZ-LS
+
+Additionally, the script generates a summary csv, which finds each unique "zoning_summary" and computes how many parcels share that zoning designation.
 
 Overlay Legend
 |Overlay Name|Overlay Code|
