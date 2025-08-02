@@ -42,7 +42,7 @@ Overlay Legend
 |Height Reduction Zone Overlay|HR|
 |Historic Sites|HS|
 |Inclusionary Zoning Overlay|IZ|
-|Landslide Prone|LP|
+|Landslide Prone|LS|
 |North Side Commercial Parking Prohibited Area|NP|
 |Parking Elimination/Reduction Area|PR|
 |Potential Steep Slope Area|PS|
