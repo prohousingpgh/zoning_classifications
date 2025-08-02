@@ -1266,6 +1266,6 @@ There are a total of **1,208** unique zoning classifications, as noted below
 |-------|-------------|
 |Grand Total|145031|
 
-Analysis performed by [David Vatz](https://github.com/davidvatz) and [Jack Billings](https://github.com/JohnHBillings/)
+Analysis performed by [David Vatz](https://github.com/davidvatz)
 
-Consultation provided by [Carolyn Ristau](https://www.detailsreviewed.com/about)
+Consultation provided by [Carolyn Ristau](https://www.detailsreviewed.com/about) and [Jack Billings](https://github.com/JohnHBillings/)
