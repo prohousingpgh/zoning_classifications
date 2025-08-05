@@ -3,6 +3,9 @@ import pandas as pd
 import time
 from tqdm import tqdm
 import os
+import warnings
+tqdm.pandas()
+warnings.filterwarnings("ignore", category=RuntimeWarning, message="Several features with id = 0")
 
 # Start timer
 start_time = time.time()
@@ -34,75 +37,78 @@ overlay_files = {
     "sources/overlay_HS.geojson": "HS", # Designated Historic Sites
 }
 
-# Load GeoJSONs
+# Load parcel data
+print("📂 Loading parcel data (this may take a few minutes)...")
 parcels = gpd.read_file(parcels_fp).to_crs("EPSG:3857")
+
+# Define target MUNICODE values
+target_municodes = list(range(101, 133)) + [
+    801, 803, 810, 812, 818, 819, 831, 835, 838, 839, 840,
+    842, 850, 854, 863, 866, 870, 874, 877, 902, 919,
+    926, 931, 934, 937, 939, 940, 941
+]
+
+# Filter parcels by MUNICODE
+parcels = parcels[parcels["MUNICODE"].isin(target_municodes)].copy()
+print(f"🔍 Filtered to {len(parcels)} parcels in specified MUNICODEs.")
+
+# Load zoning base
+print("📂 Loading base zoning...")
 zoning_base = gpd.read_file(zoning_fp).to_crs(parcels.crs)
 
-# Load overlays into a dictionary of GeoDataFrames
-overlays = {
-    name: gpd.read_file(fname).to_crs(parcels.crs)
-    for fname, name in overlay_files.items()
-}
+# Spatial join to get zoning
+print("🔗 Performing spatial join with base zoning...")
+joined = gpd.sjoin(parcels, zoning_base[["zon_new", "geometry"]], how="left", predicate="intersects")
 
-# Build spatial index for zoning_base
-zoning_index = zoning_base.sindex
+# Drop parcels with no zoning
+joined = joined[~joined["zon_new"].isna()].copy()
 
-# Collect results
-results = []
+# Add square footage
+joined["parcel_sqft"] = joined.geometry.area / 0.092903
 
-for idx, parcel in tqdm(parcels.iterrows(), total=len(parcels), desc="Processing parcels"):
-    parcel_geom = parcel.geometry
-    mapblocklo = parcel.get("MAPBLOCKLO", str(idx))
+# Track overlay results
+overlay_results = {}
+print("📂 Loading and joining overlays...")
+for fname, name in tqdm(overlay_files.items(), desc="Processing overlays"):
+    overlay = gpd.read_file(fname).to_crs(parcels.crs)
 
-    # Find zoning match
-    zon_new = "None"
-    candidates = zoning_index.intersection(parcel_geom.bounds)
-    for zid in candidates:
-        zone = zoning_base.iloc[zid]
-        if zone.geometry.intersects(parcel_geom):
-            zon_new = zone.get("zon_new", "Unknown")
-            break
+    # Perform spatial join and identify intersecting parcel indices
+    joined_overlay = gpd.sjoin(joined[["geometry"]], overlay[["geometry"]], how="inner", predicate="intersects")
 
-    if zon_new == "None":
-        continue
+    # Mark matched parcels
+    matched_parcels = joined_overlay.index.unique()
+    joined[name] = joined.index.isin(matched_parcels)
+    joined[name] = joined[name].apply(lambda x: name if x else "")
 
-    overlay_flags = {}
-    present_overlays = []
-    for name, gdf in overlays.items():
-        if gdf.intersects(parcel_geom).any():
-            overlay_flags[name] = name
-            present_overlays.append(name)
-        else:
-            overlay_flags[name] = ""
+# Construct zoning summary
+print("🏠 Constructing zoning classification summary...")
+overlay_names = list(overlay_files.values())
+joined["zoning_summary"] = joined.progress_apply(
+    lambda row: "-".join([row["zon_new"]] + [val for val in row[overlay_names] if val]),
+    axis=1
+)
 
-    # Create summary string
-    zoning_summary = "-".join([zon_new] + present_overlays)
+# Build final DataFrame
+print("📂 Building output files...")
+joined["parcel_id"] = joined["MAPBLOCKLO"]
+joined["municode"] = joined["MUNICODE"]
+cols = ["parcel_id", "municode", "zon_new", "parcel_sqft"] + overlay_names + ["zoning_summary"]
+final_df = joined[cols].copy()
 
-    # Build result row
-    row = {
-        "MAPBLOCKLO": mapblocklo,
-        "zon_new": zon_new,
-        **overlay_flags,
-        "zoning_summary": zoning_summary
-    }
-    results.append(row)
+# Drop duplicate rows before saving
+final_df = final_df.drop_duplicates()
 
-# Save to Excel
-df = pd.DataFrame(results)
+# Save full output
+final_df.to_csv(output_fp, index=False)
 
-# Ensure column order
-ordered_cols = ["MAPBLOCKLO", "zon_new"] + list(overlay_files.values()) + ["zoning_summary"]
-df = df[ordered_cols]
-
-# Results csv
-df.to_csv(output_fp, index=False)
-
-# Summary csv
-summary_df = df["zoning_summary"].value_counts().reset_index()
-summary_df.columns = ["zoning_summary", "count"]
+# Save summary
+summary_df = final_df.groupby("zoning_summary").agg(
+    count=("parcel_id", "count"),
+    total_sqft=("parcel_sqft", "sum")
+).reset_index()
 summary_df.to_csv(output_summary_fp, index=False)
 
-# Print results to screen
+# Timing
 elapsed = time.time() - start_time
 print(f"✅ Analysis complete. Results saved to: {output_fp}")
 print(f"✅ Zoning summary saved to: {output_summary_fp}")
