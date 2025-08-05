@@ -6,7 +6,7 @@ The City of Pittsburgh has numerous base zoning districts, zoning overlays, envi
 
 The purpose of this project is to determine how many "de facto" zoning classifications exist in the City of Pittsburgh by looking at how many unique combinations of base zoning, density, and overlays exist. Each one of these unique combination is potentially a different set of land use rules that builders must follow.
 
-We find that there are a total of **1,516** unique zoning classifications in the city of Pittsburgh, each of which can represent a unique set of rules that must be followed when building on that parcel. With a total universe of around 145,031 parcels that we analyzed, this means that there is approximately **one unique rule set for every 120 properties in the city**. 
+We find that there are a total of **1,516** unique zoning classifications in the city of Pittsburgh, each of which can represent a unique set of rules that must be followed when building on that parcel. With a total universe of around 145,031 parcels that we analyzed, this means that there is approximately **one unique rule set for every 96 properties in the city**. 
 
 Method:
 
