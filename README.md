@@ -8,7 +8,8 @@ The purpose of this project is to determine how many "de facto" zoning classific
 
 We find that there are a total of **1,516** unique zoning classifications in the city of Pittsburgh, each of which can represent a unique set of rules that must be followed when building on that parcel. With a total universe of around 145,031 parcels that we analyzed, this means that there is approximately **one unique rule set for every 96 properties in the city**. 
 
-Method:
+If you would like to replicate this analysis on another city, [see instructions](#how-to-re-use-this-script) at the bottom.
+# Method:
 
 We first gathered the GIS data from the city and county on the following:
 1) Parcel data, from Allegheny County - parcels.geojson, obtained on 7/31/2025 from [Allegheny County's GIS portal](https://openac-alcogis.opendata.arcgis.com/documents/1b3e5809fb964497a52ca225db492624/explore)
@@ -32,7 +33,8 @@ R1A-M-IZ-LS
 
 Additionally, the script generates a summary csv, which finds each unique "zoning_summary" and computes how many parcels share that zoning designation.
 
-Overlay Legend
+# Overlay Legend
+
 |Overlay Name|Overlay Code|
 |----------|----------------|
 |Baum Centre Zoning Overlay|BC|
@@ -51,7 +53,7 @@ Overlay Legend
 |1500' Major Transit Buffer|TR|
 |Undermined Areas|UM|
 
-Top 10 Zoning Classifications, by Square Footage
+# Top 10 Zoning Classifications, by Square Footage
 |Zoning Classification (zoning_summary)|Square Footage|Plain English Zoning Name|
 |----------|----------------|--------|
 |R1D-L-UM-PS|116,688,578|Single Family Detached Residential (Low-Density), Undermined Area, Potential Steep Slope|
@@ -66,6 +68,7 @@ Top 10 Zoning Classifications, by Square Footage
 |R1D-H-UM-PS|45,107,867|Single-Family Detached Residential (High-Density), Undermined, Potential Steep Slope|
 
 
+# Table of Zoning Classifications
 There are a total of **1,516** unique zoning classifications, as noted below
 |Zoning Classification (zoning_summary)|Count of Zoning Classification|
 |----------|----------------|
@@ -1588,6 +1591,26 @@ There are a total of **1,516** unique zoning classifications, as noted below
 |-------|-------------|
 |Grand Total|145031|
 
+# Contributors
+
 Analysis performed by [David Vatz](https://github.com/davidvatz)
 
 Consultation provided by [Carolyn Ristau](https://www.detailsreviewed.com/about) and [Jack Billings](https://github.com/JohnHBillings/)
+
+# How to re-use this script
+
+Some notes on re-using this script:
+1) Create a folder to hold your project, with two subfolders: /outputs and /sources
+2) Place the python file, "analyze_parcels.py", in the root folder
+3) Place your base zoning file - "zoning_base.geojson" - in the sources folder
+4) Place your parcels file - "parcels.geojson" - in the sources folder
+5) Collect all overlay files and place in the sources folder
+
+Once you've done this, you're going to need to make some updates to the python code to make it match your data.
+1) In your zoning_base.geojson, identify the field name for base zoning classification. In mine, this was "zon_new" but may be something else in yours. Update the Python code to correctly refer to that field by replacing all "zon_new" with the correct field name for your file.
+2) In your parcels.geojson, identify the field name for a unique identifier for each parcel. In mine, this was "MAPBLOCKLO". Same as before, find replace in the Python script
+3) Update the overlay_files section of the script with paths for each overlay file, and a unique column identifier for each. I used two-letter names, but you could use whatever you please.
+4) For the target_municodes section, you could choose to comment this entire section out if you want - I did this because my file contained all parcels for the whole county, so I wanted to filter down to just the city. Even if you comment this whole section out, the script will still run, it just might take longer!
+5) You will also want to remove other references to municodes if you don't plan to utilize.
+
+Once you've done all of this, you should be able to execute the script and get results! Feel free to reach out with questions.
